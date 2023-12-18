@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    cluster-autoscaler.kubernetes.io/safe-to-evict: 'true'
+  name: argocd-redis
+  namespace: argocd
+  labels:
+    helm.sh/chart: argo-cd-5.43.4
+    app.kubernetes.io/name: argocd-redis
+    app.kubernetes.io/instance: argocd
+    app.kubernetes.io/component: redis
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: argocd
+    app.kubernetes.io/version: v2.8.0
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: argocd-redis
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: argo-cd-5.43.4
+        app.kubernetes.io/name: argocd-redis
+        app.kubernetes.io/instance: argocd
+        app.kubernetes.io/component: redis
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/part-of: argocd
+        app.kubernetes.io/version: v2.8.0
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: 'true'
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: default
+      containers:
+        - name: redis
+          image: public.ecr.aws/docker/library/redis:7.0.11-alpine
+          imagePullPolicy: IfNotPresent
+          args:
+            - '--save'
+            - ''
+            - '--appendonly'
+            - 'no'
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
+          resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: argocd-redis
+                topologyKey: kubernetes.io/hostname
+      dnsPolicy: ClusterFirst

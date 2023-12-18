@@ -1,0 +1,21 @@
+metadata:
+  name: argocd-server-internal-vs
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+spec:
+  gateways:
+    - default/internal-ingress-gateway
+  hosts:
+    - some-fqdn
+  http:
+    - route:
+        - destination:
+            port:
+              number: 80
+            host: argocd-server
+      match:
+        - uri:
+            prefix: /

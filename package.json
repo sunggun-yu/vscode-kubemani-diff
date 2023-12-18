@@ -1,0 +1,172 @@
+{
+  "name": "kubemani-diff",
+  "displayName": "kubemani-diff",
+  "description": "Kubernetes Manifest Diff",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.84.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sunggun-yu/vscode-kubemani-diff"
+  },
+  "icon": "./resources/app-icon.png",
+  "galleryBanner": {
+    "color": "#7cc423",
+    "theme": "dark"
+  },
+  "keywords": [
+    "compare kubernetes",
+    "compare kubernetes manifest",
+    "compare kubernetes yaml",
+    "diff kubernetes",
+    "diff yaml",
+    "diff kubernetes manifest"
+  ],
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "kubemani-diff",
+          "title": "KubeMani Diff",
+          "icon": "resources/container-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "kubemani-diff": [
+        {
+          "id": "kubemani-file-view",
+          "name": "Files in Diff"
+        },
+        {
+          "id": "kubemani-tree-view",
+          "name": "Kubernetes Objects"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "kubemani-diff.diffSelectedItem",
+        "title": "Diff",
+        "category": "KubeMani Diff",
+        "icon": {
+          "light": "resources/light/eye.svg",
+          "dark": "resources/dark/eye.svg"
+        }
+      },
+      {
+        "command": "kubemani-diff.openFileA",
+        "title": "Open File A",
+        "category": "KubeMani Diff",
+        "icon": {
+          "light": "resources/light/folder-opened.svg",
+          "dark": "resources/dark/folder-opened.svg"
+        }
+      },
+      {
+        "command": "kubemani-diff.openFileB",
+        "title": "Open File B",
+        "category": "KubeMani Diff",
+        "icon": {
+          "light": "resources/light/folder-opened.svg",
+          "dark": "resources/dark/folder-opened.svg"
+        }
+      },
+      {
+        "command": "kubemani-diff.reset",
+        "title": "Reset",
+        "category": "KubeMani Diff",
+        "icon": {
+          "light": "resources/light/trash.svg",
+          "dark": "resources/dark/trash.svg"
+        }
+      },
+      {
+        "command": "kubemani-diff.selectFiles",
+        "title": "Select Kubernetes Manifest files to compare",
+        "category": "KubeMani Diff"
+      },
+      {
+        "command": "kubemani-diff.updateKubeItem",
+        "title": "Select Kubernetes Manifest files to compare",
+        "category": "KubeMani Diff"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "kubemani-diff.diffSelectedItem",
+          "when": "false"
+        },
+        {
+          "command": "kubemani-diff.selectFiles",
+          "when": "false"
+        },
+        {
+          "command": "kubemani-diff.updateKubeItem",
+          "when": "false"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "kubemani-diff.selectFiles",
+          "when": "listDoubleSelection && !explorerResourceIsFolder"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "kubemani-diff.reset",
+          "when": "view == kubemani-file-view",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "kubemani-diff.diffSelectedItem",
+          "when": "view == kubemani-tree-view && viewItem == kube-item",
+          "group": "inline"
+        },
+        {
+          "command": "kubemani-diff.openFileA",
+          "when": "view == kubemani-file-view && viewItem == A",
+          "group": "inline"
+        },
+        {
+          "command": "kubemani-diff.openFileB",
+          "when": "view == kubemani-file-view && viewItem == B",
+          "group": "inline"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.84.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "@vscode/test-cli": "^0.0.4",
+    "@vscode/test-electron": "^2.3.8",
+    "eslint": "^8.54.0",
+    "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "@kubernetes/client-node": "^0.20.0",
+    "@types/js-yaml": "^4.0.9",
+    "js-yaml": "^4.1.0"
+  }
+}

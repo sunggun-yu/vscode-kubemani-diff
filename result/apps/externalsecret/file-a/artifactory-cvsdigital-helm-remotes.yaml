@@ -1,0 +1,38 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: artifactory-cvsdigital-helm-remotes
+  namespace: argocd
+spec:
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: platform-services-clustersecretstore
+  refreshInterval: 15s
+  data:
+    - remoteRef:
+        conversionStrategy: Default
+        decodingStrategy: None
+        key: artifactory/readonly
+        property: username
+      secretKey: username
+    - remoteRef:
+        conversionStrategy: Default
+        decodingStrategy: None
+        key: artifactory/readonly
+        property: token
+      secretKey: token
+  target:
+    creationPolicy: Owner
+    deletionPolicy: Retain
+    name: artifactory-cvsdigital-helm-remotes
+    template:
+      type: Opaque
+      metadata:
+        labels:
+          argocd.argoproj.io/secret-type: repository
+      data:
+        name: Helm remote repositories in Artifactory
+        password: '{{ .token }}'
+        type: helm
+        url: https://cvsh.jfrog.io/artifactory/cvsdigital-helm-remotes
+        username: '{{ .username }}'
