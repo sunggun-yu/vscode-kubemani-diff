@@ -26,9 +26,9 @@ export function createTempDirectory(): vscode.Uri {
 }
 
 /**
- * Checks if the provided URI represents a directory.
- * @param uri - The URI to check.
- * @returns A boolean indicating whether the URI represents a directory.
+ * Checks if the provided vscode.Uri represents a directory.
+ * @param uri - The vscode.Uri to check.
+ * @returns A boolean indicating whether the vscode.Uri represents a directory.
  */
 export function isDirectory(uri: vscode.Uri): boolean {
   if (!uri || !uri.fsPath ) {
@@ -39,6 +39,24 @@ export function isDirectory(uri: vscode.Uri): boolean {
     return stats.isDirectory();
   } catch (error) {
     Logger.error(`error checking if '${uri.fsPath}' is a directory:`, error);
+    return false;
+  }
+}
+
+/**
+ * Checks if the provided vscode.Uri represents a file.
+ * @param uri - The vscode.Uri to check.
+ * @returns A boolean indicating whether the vscode.Uri represents a file.
+ */
+export function isFile(uri: vscode.Uri): boolean {
+  if (!uri || !uri.fsPath ) {
+    return false;
+  }
+  try {
+    const stats = fs.statSync(uri.fsPath);
+    return stats.isFile();
+  } catch (error) {
+    Logger.error(`error checking if '${uri.fsPath}' is a file:`, error);
     return false;
   }
 }
@@ -79,4 +97,18 @@ export function createSubDirectory(baseUri: vscode.Uri | undefined, subPath: str
     Logger.error(`error creating subdirectory '${subPath}' under '${baseUri.fsPath}':`, err);
     throw err;
   }
+}
+
+/**
+ * Returns directory name of file or directory
+ * @param uri the vscode.Uri of file or directory
+ * @returns 
+ */
+export function getBaseDirname(uri: vscode.Uri): string | undefined {
+  if (isFile(uri)) {
+    return path.basename(path.dirname(uri.fsPath));
+  } else if (isDirectory(uri)) {
+    return path.basename(uri.fsPath);
+  }
+  return undefined;
 }
