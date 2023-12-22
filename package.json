@@ -68,6 +68,11 @@
         }
       },
       {
+        "command": "kubemani-diff.diffSelectedItems",
+        "title": "Compare Selected Items",
+        "category": "KubeMani Diff"
+      },
+      {
         "command": "kubemani-diff.openFileA",
         "title": "Open File A",
         "category": "KubeMani Diff",
@@ -112,6 +117,10 @@
           "when": "false"
         },
         {
+          "command": "kubemani-diff.diffSelectedItems",
+          "when": "false"
+        },
+        {
           "command": "kubemani-diff.selectFiles",
           "when": "false"
         },
@@ -136,7 +145,7 @@
       "view/item/context": [
         {
           "command": "kubemani-diff.diffSelectedItem",
-          "when": "view == kubemani-tree-view && viewItem == kube-item",
+          "when": "view == kubemani-tree-view && (viewItem == kube-item || viewItem == kube-item-AB)",
           "group": "inline"
         },
         {
@@ -148,12 +157,17 @@
           "command": "kubemani-diff.openFileB",
           "when": "view == kubemani-file-view && viewItem == B",
           "group": "inline"
+        },
+        {
+          "command": "kubemani-diff.diffSelectedItems",
+          "when": "view == kubemani-tree-view && listDoubleSelection && viewItem == kube-item"
         }
       ]
     }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
+    "build": "vsce package",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",

@@ -3,15 +3,16 @@ import * as path from 'path';
 import * as yaml from 'js-yaml';
 import * as fs from 'fs';
 import { Logger } from "./utils/logger";
-import { createTempDirectory, deleteDirectory, createSubDirectory } from './utils/files';
+import { createTempDirectory, deleteDirectory, createSubDirectory, getBaseDirname } from './utils/files';
 
 export class KubeItemView {
 
   constructor(context: vscode.ExtensionContext) {
     const provider = new KubeItemViewProvider();
-    const view = vscode.window.createTreeView('kubemani-tree-view', { treeDataProvider: provider, showCollapseAll: true });
+    const view = vscode.window.createTreeView('kubemani-tree-view', { treeDataProvider: provider, showCollapseAll: true, canSelectMany: true });
     context.subscriptions.push(provider, view);
     vscode.commands.registerCommand('kubemani-diff.diffSelectedItem', item => provider.diffSelectedItem(item));
+    vscode.commands.registerCommand('kubemani-diff.diffSelectedItems', provider.diffSelectedItems);
     vscode.commands.registerCommand('kubemani-diff.updateKubeItem', provider.update);
   }
 }
@@ -49,6 +50,7 @@ export class KubeItem extends vscode.TreeItem implements IKubeItem {
     public uriB?: vscode.Uri | undefined
   ) {
 
+    // TODO: create config to set Collapsed or Expanded by default;
     var collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
     if (type === KubeItemType.Item) {
       collapsibleState = vscode.TreeItemCollapsibleState.None;
@@ -161,20 +163,40 @@ export class KubeItemViewProvider implements vscode.TreeDataProvider<KubeItem>, 
     return;
   };
 
-  diffSelectedItem(item: KubeItem) {
+  async diffSelectedItem(item: KubeItem) {
     if (item.uriA && item.uriB) {
-      vscode.commands.executeCommand('vscode.diff', item.uriA, item.uriB, `KubeMani Diff - ${item.paths}`);
-      return;
+      await vscode.commands.executeCommand('vscode.diff', item.uriA, item.uriB, `KubeMani Diff - ${item.paths}`);
+      return Promise.resolve();
     }
     if (item.uriA && !item.uriB) {
-      vscode.commands.executeCommand('vscode.open', item.uriA);
-      return;
+      await vscode.commands.executeCommand('vscode.open', item.uriA);
+      return Promise.resolve();
     }
     if (!item.uriA && item.uriB) {
-      vscode.commands.executeCommand('vscode.open', item.uriB);
-      return;
+      await vscode.commands.executeCommand('vscode.open', item.uriB);
+      return Promise.resolve();
     }
   }
+
+  diffSelectedItems = async (_e: KubeItem, items: [KubeItem, KubeItem]) => {
+    const uris: vscode.Uri[] = [];
+    for (let item of items) {
+      if (!item.appears || item.appears === "AB") {
+        await vscode.window.showErrorMessage("Cannot compare selected items");
+        return Promise.resolve(undefined);
+      }
+      if (item.uriA) {
+        uris.push(item.uriA);
+        continue;
+      }
+      if (item.uriB) {
+        uris.push(item.uriB);
+        continue;
+      }
+    }
+    await vscode.commands.executeCommand('vscode.diff', uris[0], uris[1], `KubeMani Diff - ${getBaseDirname(uris[0])} - ${getBaseDirname(uris[1])}`);
+    return Promise.resolve();
+  };
 
 /**
  * implement vscode.Disposable to delete temp directory when vscode is closed
@@ -256,6 +278,7 @@ function createTreeFromYAML(root: KubeItem, yamlData: KubernetesObject[], tempDi
       if (nameNode) {
         if ((nameNode.uriA && appears === "B") || (nameNode.uriB && appears === "A")) {
           nameNode.appears = "AB";
+          nameNode.contextValue = "kube-item-AB";
           nameNode.updateIconPath();
         }
       } else {
