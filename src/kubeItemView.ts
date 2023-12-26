@@ -50,8 +50,11 @@ export class KubeItem extends vscode.TreeItem implements IKubeItem {
     public uriB?: vscode.Uri | undefined
   ) {
 
-    // TODO: create config to set Collapsed or Expanded by default;
-    var collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+    let collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+    const sortYaml = vscode.workspace.getConfiguration().get('kubemaniTreeView.expandAll');
+    if (sortYaml) {
+      collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
+    }
     if (type === KubeItemType.Item) {
       collapsibleState = vscode.TreeItemCollapsibleState.None;
     }
@@ -314,7 +317,8 @@ function createTempFileFromKubernetesObject(content: KubernetesObject, dir: vsco
 
   const filePath = path.join(dir.fsPath, `${appears}.yaml`);
   try {
-    fs.writeFileSync(filePath, yaml.dump(content));
+    const sortYaml = vscode.workspace.getConfiguration().get('editor.sortYaml');
+    fs.writeFileSync(filePath, yaml.dump(content, {sortKeys: sortYaml ? true : false}));
     const fileUri = vscode.Uri.file(filePath);
     return fileUri;
   } catch (err) {

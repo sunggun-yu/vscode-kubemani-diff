@@ -36,6 +36,26 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
+    "configuration": [
+      {
+        "id": "kubemani-diff-configuration",
+        "title": "KubeMani Diff",
+        "properties": {
+          "kubemaniTreeView.expandAll": {
+            "type": "boolean",
+            "default": true,
+            "description": "Expand all the Kubernetes Objects in a tree view by default",
+            "scope": "resource"
+          },
+          "editor.sortYaml": {
+            "type": "boolean",
+            "default": true,
+            "description": "Sort the Kubernetes Object YAML in the Editor",
+            "scope": "resource"
+          }
+        }
+      }
+    ],
     "viewsContainers": {
       "activitybar": [
         {
