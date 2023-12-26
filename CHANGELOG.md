@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/sunggun-yu/vscode-kubemani-diff/compare/v1.1.0...v1.2.0) (2023-12-26)
+
+
+### Features
+
+* default config ([#6](https://github.com/sunggun-yu/vscode-kubemani-diff/issues/6)) ([0c545ee](https://github.com/sunggun-yu/vscode-kubemani-diff/commit/0c545eeaced0c4eae867a02e5461ba47f94706cb))
+
 ## [1.1.0](https://github.com/sunggun-yu/vscode-kubemani-diff/compare/v1.0.0...v1.1.0) (2023-12-22)
 
 
