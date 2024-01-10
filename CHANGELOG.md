@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/sunggun-yu/vscode-kubemani-diff/compare/v1.2.0...v1.3.0) (2024-01-10)
+
+
+### Features
+
+* compare doc and indicate in icon ([#8](https://github.com/sunggun-yu/vscode-kubemani-diff/issues/8)) ([b1ca940](https://github.com/sunggun-yu/vscode-kubemani-diff/commit/b1ca94008a88c2ffa94fb499102482a5ae6ec004))
+
 ## [1.2.0](https://github.com/sunggun-yu/vscode-kubemani-diff/compare/v1.1.0...v1.2.0) (2023-12-26)
 
 
