@@ -44,7 +44,6 @@ export const kubeBaseObjectToYamlString = (obj: KubeBaseObject, sort: boolean = 
 };
 
 export class KubeContent {
-  public readonly doc: string;
   public readonly api: string;
   public readonly kind: string;
   public readonly name: string;
@@ -69,9 +68,6 @@ export class KubeContent {
     this.kind = obj.kind;
     this.name = obj.metadata.name;
 
-    // generate YAML document string
-    this.doc = this.toString();
-
     // init kube object properties
     this.apiUri = vscode.Uri.file(path.join(this.contentRootDir.fsPath, this.api));
     this.kindUri = vscode.Uri.file(path.join(this.apiUri.fsPath, this.kind));
@@ -89,15 +85,27 @@ export class KubeContent {
     }
 
     try {
-      fs.writeFileSync(this.docUri.fsPath, this.doc);
+      fs.writeFileSync(this.docUri.fsPath, this.toString());
     } catch (err) {
       Logger.error(`Error creating kubernetes object manifest file for ${this.api}/${this.kind}/${this.name}/${this.itemOf}:`, err);
       throw err;
     }
   }
 
-  private toString = (): string => {
+  toString = (): string => {
     const sortYaml = vscode.workspace.getConfiguration().get('editor.sortYaml');
     return kubeBaseObjectToYamlString(this.obj, sortYaml ? true : false);
+  };
+
+  /**
+   * Simple comparison between this KubeContent object and an optional other KubeContent object in yaml string.
+   * @param item An optional KubeContent object for comparison
+   * @returns boolean result of yaml string comparison between KubeContent objects
+   */
+  compare = (item?: KubeContent): boolean => {
+    if (item) {
+      return this.toString() === item.toString();
+    }
+    return false;
   };
 }

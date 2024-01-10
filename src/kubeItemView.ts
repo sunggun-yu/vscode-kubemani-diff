@@ -63,7 +63,7 @@ export class KubeItem extends vscode.TreeItem {
       const appeared = this.appeared();
       if (appeared) {
         if (appeared === "AB") {
-          if (this.A?.doc === this.B?.doc) {
+          if (this.A?.compare(this.B)) {
             return {
               light: path.join(__filename, '..', '..', 'resources', 'light', `item-in-file-${appeared}-no-diff.svg`),
               dark: path.join(__filename, '..', '..', 'resources', 'dark', `item-in-file-${appeared}-no-diff.svg`),
