@@ -121,7 +121,7 @@
       },
       {
         "command": "kubemani-diff.selectFiles",
-        "title": "Select Kubernetes Manifest files to compare",
+        "title": "KubeMani Diff: Select Kubernetes Manifest files to compare",
         "category": "KubeMani Diff"
       },
       {
